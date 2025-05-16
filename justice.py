@@ -23,7 +23,7 @@ HERO_BACKGROUNDS = {
 
 # --- Hero Configuration ---
 HEROES = {
-    "Batman": {
+     "Batman": {
         "id": "0001",
         "welcome": "RECOGNIZED. JL MEMBER 0001. WELCOME BATMAN!",
         "location": "Batcave",
@@ -34,7 +34,8 @@ HEROES = {
             "Your guide through Machine Learning.",
             "Together, we’ll hunt down bugs like rogues in Arkham...",
             "Turning lines of code into the Bat-Tools you need for sophisticated financial analysis."
-        ]
+        ],
+        "farewell_lines": ["Stay vigilant. Batman out."]
     },
     "Superman": {
         "id": "0002",
@@ -45,7 +46,8 @@ HEROES = {
             "From the Fortress of Solitude to Metropolis, we'll soar through regression.",
             "I'm Superman.",
             "Ready to lift heavy datasets, bringing order to your models—faster than a speeding bullet!"
-        ]
+        ],
+        "farewell_lines": ["Hope is always alive. Until next time!"]
     },
     "Flash": {
         "id": "0003",
@@ -56,7 +58,8 @@ HEROES = {
             "Ready to move at lightning speed?",
             "I'm The Flash.",
             "Let’s sprint through loops and functions, processing market data in a flash."
-        ]
+        ],
+        "farewell_lines": ["Gotta run!"]
     },
     "Green Lantern": {
         "id": "0004",
@@ -67,7 +70,32 @@ HEROES = {
             "Your willpower is your superpower.",
             "I'm Green Lantern.",
             "Let’s construct code constructs, powering through clustering and classification with determination."
-        ]
+        ],
+        "farewell_lines": ["In brightest day or blackest night, see you next time."]
+    }
+}
+
+# Templates for hero interpretation lines
+INTERPRET_TEMPLATES = {
+    "Batman": {
+        "Linear Regression": "With an R² of {metric:.2f}, our predictions hit their mark. Gotham is safer tonight.",
+        "Logistic Regression": "Accuracy at {metric:.2f}. Another victory for the Justice League.",
+        "K-Means Clustering": "Clusters found: {k}. We'll keep watch on each sector."
+    },
+    "Superman": {
+        "Linear Regression": "An R² of {metric:.2f}—truth and justice are clearly on our side.",
+        "Logistic Regression": "Accuracy at {metric:.2f}. We'll keep Metropolis safe.",
+        "K-Means Clustering": "Great work! {k} groups identified—strength in numbers."
+    },
+    "Flash": {
+        "Linear Regression": "Zoom! R² hit {metric:.2f}. We're lightning fast!",
+        "Logistic Regression": "Accuracy at {metric:.2f}. Speed isn't our only power.",
+        "K-Means Clustering": "We mapped {k} clusters in a flash!"
+    },
+    "Green Lantern": {
+        "Linear Regression": "R² of {metric:.2f}. My will constructs victory from data.",
+        "Logistic Regression": "Accuracy at {metric:.2f}. The Corps would be proud.",
+        "K-Means Clustering": "By willpower, {k} clusters reveal the data's structure."
     }
 }
 
@@ -406,70 +434,79 @@ elif st.session_state.step == 'ml_task':
             if not feature_cols or not target_col:
                 st.error("Please select at least one feature and a target.")
             else:
-                    X = df[feature_cols].values
-                    y = df[target_col].values
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-                    scaler = StandardScaler()
-                    X_train = scaler.fit_transform(X_train)
-                    X_test = scaler.transform(X_test)
+                X = df[feature_cols].values
+                y = df[target_col].values
+                X_train, X_test, y_train, y_test = train_test_split(
+                    X, y, test_size=test_size, random_state=42
+                )
+                scaler = StandardScaler()
+                X_train = scaler.fit_transform(X_train)
+                X_test = scaler.transform(X_test)
 
-        if task == "Linear Regression":
+                if task == "Linear Regression":
                     model = LinearRegression()
                     model.fit(X_train, y_train)
                     preds = model.predict(X_test)
-                    r2 = r2_score(y_test, preds)
+                    r2 = model.score(X_test, y_test)
                     st.success(f"R² Score: {r2:.2f}")
-                    result_df = pd.DataFrame({'Actual': y_test, 'Predicted': preds})
+                    result_df = pd.DataFrame({"Actual": y_test, "Predicted": preds})
                     fig = go.Figure()
-                    fig.add_trace(go.Scatter(
-                        x=result_df['Actual'],
-                        y=result_df['Predicted'],
-                        mode='markers',
-                        marker=dict(size=8, color=hero_color['primary'], line=dict(width=1, color='#222')),
-                        name='Predictions'
-                    ))
-                    m, b = np.polyfit(result_df['Actual'], result_df['Predicted'], 1)
-                    fig.add_trace(go.Scatter(
-                        x=result_df['Actual'],
-                        y=m * result_df['Actual'] + b,
-                        mode='lines',
-                        name='Trend',
-                        line=dict(color='#DC143C', width=3)
-                    ))
+                    fig.add_trace(
+                        go.Scatter(
+                            x=result_df["Actual"],
+                            y=result_df["Predicted"],
+                            mode="markers",
+                            marker=dict(size=8, color=hero_color["primary"], line=dict(width=1, color="#222")),
+                            name="Predictions",
+                        )
+                    )
+                    m, b = np.polyfit(result_df["Actual"], result_df["Predicted"], 1)
+                    fig.add_trace(
+                        go.Scatter(
+                            x=result_df["Actual"],
+                            y=m * result_df["Actual"] + b,
+                            mode="lines",
+                            name="Trend",
+                            line=dict(color="#DC143C", width=3),
+                        )
+                    )
                     fig.update_layout(
                         title="Actual vs Predicted Values",
                         xaxis_title="Actual",
                         yaxis_title="Predicted",
-                        plot_bgcolor='#181818',
-                        paper_bgcolor='#18172a',
-                        font=dict(color=hero_color['primary'])
+                        plot_bgcolor="#181818",
+                        paper_bgcolor="#18172a",
+                        font=dict(color=hero_color["primary"]),
                     )
                     st.plotly_chart(fig, use_container_width=True, key="lin_pred")
 
-                     # Residual plot
-                    residuals = result_df['Actual'] - result_df['Predicted']
+                    residuals = result_df["Actual"] - result_df["Predicted"]
                     res_fig = px.histogram(
                         residuals,
                         nbins=30,
                         title="Residuals Distribution",
-                        labels={'value': 'Residual', 'count': 'Frequency'},
+                        labels={"value": "Residual", "count": "Frequency"},
                     )
                     res_fig.update_layout(
-                        plot_bgcolor='#181818',
-                        paper_bgcolor='#18172a',
-                        font=dict(color=hero_color['primary'])
+                        plot_bgcolor="#181818",
+                        paper_bgcolor="#18172a",
+                        font=dict(color=hero_color["primary"]),
                     )
                     st.plotly_chart(res_fig, use_container_width=True, key="lin_resid")
-                    
-                    csv = result_df.to_csv(index=False).encode('utf-8')
+
+                    csv = result_df.to_csv(index=False).encode("utf-8")
                     st.download_button(
                         label="Download Results as CSV",
                         data=csv,
-                        file_name='linear_regression_results.csv',
-                        mime='text/csv'
+                        file_name="linear_regression_results.csv",
+                        mime="text/csv",
                     )
 
-        elif task == "Logistic Regression":
+                    message = INTERPRET_TEMPLATES[hero_choice][task].format(metric=r2)
+                    typewriter([message], color=hero_color["primary"])
+                    typewriter(hero["farewell_lines"], color=hero_color["primary"])
+
+                else:
                     model = LogisticRegression(max_iter=1000)
                     model.fit(X_train, y_train)
                     preds = model.predict(X_test)
@@ -481,34 +518,40 @@ elif st.session_state.step == 'ml_task':
                         text_auto=True,
                         color_continuous_scale="YlGnBu",
                         labels=dict(x="Predicted", y="Actual", color="Count"),
-                        x=['Class 0', 'Class 1'],
-                        y=['Class 0', 'Class 1']
+                        x=["Class 0", "Class 1"],
+                        y=["Class 0", "Class 1"],
                     )
                     fig.update_layout(
                         title="Confusion Matrix",
-                        plot_bgcolor='#181818',
-                        paper_bgcolor='#18172a',
-                        font=dict(color=hero_color['primary'])
+                        plot_bgcolor="#181818",
+                        paper_bgcolor="#18172a",
+                        font=dict(color=hero_color["primary"]),
                     )
                     st.plotly_chart(fig, use_container_width=True, key="log_conf")
 
-                     # ROC Curve
                     if len(np.unique(y_test)) == 2:
                         y_prob = model.predict_proba(X_test)[:, 1]
                         fpr, tpr, _ = roc_curve(y_test, y_prob)
                         roc_auc = auc(fpr, tpr)
                         roc_fig = go.Figure()
-                        roc_fig.add_trace(go.Scatter(x=fpr, y=tpr, mode='lines', name='ROC Curve'))
-                        roc_fig.add_trace(go.Scatter(x=[0,1], y=[0,1], mode='lines', line=dict(dash='dash'), name='Random'))
+                        roc_fig.add_trace(go.Scatter(x=fpr, y=tpr, mode="lines", name="ROC Curve"))
+                        roc_fig.add_trace(
+                            go.Scatter(x=[0, 1], y=[0, 1], mode="lines", line=dict(dash="dash"), name="Random")
+                        )
                         roc_fig.update_layout(
-                            title=f'ROC Curve (AUC={roc_auc:.2f})',
-                            xaxis_title='False Positive Rate',
-                            yaxis_title='True Positive Rate',
-                            plot_bgcolor='#181818',
-                            paper_bgcolor='#18172a',
-                            font=dict(color=hero_color['primary'])
+                            title=f"ROC Curve (AUC={roc_auc:.2f})",
+                            xaxis_title="False Positive Rate",
+                            yaxis_title="True Positive Rate",
+                            plot_bgcolor="#181818",
+                            paper_bgcolor="#18172a",
+                            font=dict(color=hero_color["primary"]),
                         )
                         st.plotly_chart(roc_fig, use_container_width=True, key="log_roc")
+
+                    message = INTERPRET_TEMPLATES[hero_choice][task].format(metric=acc)
+                    typewriter([message], color=hero_color["primary"])
+                    typewriter(hero["farewell_lines"], color=hero_color["primary"])
+
     elif task == "K-Means Clustering":
         st.subheader("K-Means Clustering Setup")
         if len(numeric_cols) < 2:
@@ -518,7 +561,7 @@ elif st.session_state.step == 'ml_task':
                 "Select 2 features for clustering:",
                 numeric_cols,
                 default=numeric_cols[:2],
-                key="kmeans_features"
+                key="kmeans_features",
             )
             k = st.slider("Select number of clusters (K):", 2, 8, 3)
             if st.button("Run K-Means Clustering"):
@@ -537,35 +580,43 @@ elif st.session_state.step == 'ml_task':
 
                     st.success("Clustering complete! See plot and download results below.")
                     fig = px.scatter(
-                        x=X_scaled[:, 0], y=X_scaled[:, 1],
+                        x=X_scaled[:, 0],
+                        y=X_scaled[:, 1],
                         color=clusters.astype(str),
                         title="K-Means Clustering Results",
-                        labels={'x': feature_cols[0], 'y': feature_cols[1]},
+                        labels={"x": feature_cols[0], "y": feature_cols[1]},
                         symbol=clusters.astype(str),
-                        height=500
+                        height=500,
                     )
-                    fig.add_trace(go.Scatter(
-                        x=centers[:, 0], y=centers[:, 1],
-                        mode='markers',
-                        marker=dict(symbol='x', color='white', size=16, line=dict(width=3, color=hero_color['primary'])),
-                        name='Centers'
-                    ))
+                    fig.add_trace(
+                        go.Scatter(
+                            x=centers[:, 0],
+                            y=centers[:, 1],
+                            mode="markers",
+                            marker=dict(symbol="x", color="white", size=16, line=dict(width=3, color=hero_color["primary"])),
+                            name="Centers",
+                        )
+                    )
                     fig.update_layout(
-                        plot_bgcolor='#181818',
-                        paper_bgcolor='#18172a',
-                        font=dict(color=hero_color['primary'])
+                        plot_bgcolor="#181818",
+                        paper_bgcolor="#18172a",
+                        font=dict(color=hero_color["primary"]),
                     )
                     st.plotly_chart(fig, use_container_width=True, key="kmeans")
                     st.write("**Cluster Centers (Standardized Scale):**")
                     centers_df = pd.DataFrame(centers, columns=feature_cols)
                     st.dataframe(centers_df)
-                    csv = result_df.to_csv(index=False).encode('utf-8')
+                    csv = result_df.to_csv(index=False).encode("utf-8")
                     st.download_button(
                         label="Download Data with Clusters",
                         data=csv,
-                        file_name='kmeans_results.csv',
-                        mime='text/csv'
+                        file_name="kmeans_results.csv",
+                        mime="text/csv",
                     )
+
+                    message = INTERPRET_TEMPLATES[hero_choice][task].format(k=k)
+                    typewriter([message], color=hero_color["primary"])
+                    typewriter(hero["farewell_lines"], color=hero_color["primary"])
 
     st.sidebar.markdown("---")
     st.sidebar.write("© Hall of Justice")
