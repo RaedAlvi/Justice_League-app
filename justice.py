@@ -446,7 +446,7 @@ elif st.session_state.step == 'ml_task':
                     )
                     st.plotly_chart(fig, use_container_width=True, key="lin_pred")
 
-                    # Residual plot
+                     # Residual plot
                     residuals = result_df['Actual'] - result_df['Predicted']
                     res_fig = px.histogram(
                         residuals,
@@ -460,22 +460,7 @@ elif st.session_state.step == 'ml_task':
                         font=dict(color=hero_color['primary'])
                     )
                     st.plotly_chart(res_fig, use_container_width=True, key="lin_resid")
-
-                    # Residual plot
-                    residuals = result_df['Actual'] - result_df['Predicted']
-                    res_fig = px.histogram(
-                        residuals,
-                        nbins=30,
-                        title="Residuals Distribution",
-                        labels={'value': 'Residual', 'count': 'Frequency'},
-                    )
-                    res_fig.update_layout(
-                        plot_bgcolor='#181818',
-                        paper_bgcolor='#18172a',
-                        font=dict(color=hero_color['primary'])
-                    )
-                    st.plotly_chart(res_fig, use_container_width=True) 
-                    st.plotly_chart(fig, use_container_width=True)
+                    
                     csv = result_df.to_csv(index=False).encode('utf-8')
                     st.download_button(
                         label="Download Results as CSV",
@@ -507,7 +492,7 @@ elif st.session_state.step == 'ml_task':
                     )
                     st.plotly_chart(fig, use_container_width=True, key="log_conf")
 
-                    # ROC Curve
+                     # ROC Curve
                     if len(np.unique(y_test)) == 2:
                         y_prob = model.predict_proba(X_test)[:, 1]
                         fpr, tpr, _ = roc_curve(y_test, y_prob)
@@ -524,25 +509,6 @@ elif st.session_state.step == 'ml_task':
                             font=dict(color=hero_color['primary'])
                         )
                         st.plotly_chart(roc_fig, use_container_width=True, key="log_roc")
-
-                    # ROC Curve
-                    if len(np.unique(y_test)) == 2:
-                        y_prob = model.predict_proba(X_test)[:, 1]
-                        fpr, tpr, _ = roc_curve(y_test, y_prob)
-                        roc_auc = auc(fpr, tpr)
-                        roc_fig = go.Figure()
-                        roc_fig.add_trace(go.Scatter(x=fpr, y=tpr, mode='lines', name='ROC Curve'))
-                        roc_fig.add_trace(go.Scatter(x=[0,1], y=[0,1], mode='lines', line=dict(dash='dash'), name='Random'))
-                        roc_fig.update_layout(
-                            title=f'ROC Curve (AUC={roc_auc:.2f})',
-                            xaxis_title='False Positive Rate',
-                            yaxis_title='True Positive Rate',
-                            plot_bgcolor='#181818',
-                            paper_bgcolor='#18172a',
-                            font=dict(color=hero_color['primary'])
-                        )
-                        st.plotly_chart(roc_fig, use_container_width=True)
-
     elif task == "K-Means Clustering":
         st.subheader("K-Means Clustering Setup")
         if len(numeric_cols) < 2:
