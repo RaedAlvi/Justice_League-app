@@ -5,7 +5,7 @@ import time
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix, roc_curve, auc, r2_score
+from sklearn.metrics import confusion_matrix, roc_curve, auc, r2_score, mean_squared_error
 from sklearn.cluster import KMeans
 import plotly.graph_objects as go
 import plotly.express as px
@@ -78,23 +78,23 @@ HEROES = {
 # Templates for hero interpretation lines
 INTERPRET_TEMPLATES = {
     "Batman": {
-        "Linear Regression": "With an R² of {metric:.2f}, our predictions hit their mark. Gotham is safer tonight.",
-        "Logistic Regression": "Accuracy at {metric:.2f}. Another victory for the Justice League.",
+         "Linear Regression": "With an R² of {metric:.4f}, our predictions hit their mark. Gotham is safer tonight.",
+        "Logistic Regression": "Accuracy at {metric:.4f}. Another victory for the Justice League.",
         "K-Means Clustering": "Clusters found: {k}. We'll keep watch on each sector."
     },
     "Superman": {
-        "Linear Regression": "An R² of {metric:.2f}—truth and justice are clearly on our side.",
-        "Logistic Regression": "Accuracy at {metric:.2f}. We'll keep Metropolis safe.",
+         "Linear Regression": "An R² of {metric:.4f}—truth and justice are clearly on our side.",
+        "Logistic Regression": "Accuracy at {metric:.4f}. We'll keep Metropolis safe.",
         "K-Means Clustering": "Great work! {k} groups identified—strength in numbers."
     },
     "Flash": {
-        "Linear Regression": "Zoom! R² hit {metric:.2f}. We're lightning fast!",
-        "Logistic Regression": "Accuracy at {metric:.2f}. Speed isn't our only power.",
+        "Linear Regression": "Zoom! R² hit {metric:.4f}. We're lightning fast!",
+        "Logistic Regression": "Accuracy at {metric:.4f}. Speed isn't our only power.",
         "K-Means Clustering": "We mapped {k} clusters in a flash!"
     },
     "Green Lantern": {
-        "Linear Regression": "R² of {metric:.2f}. My will constructs victory from data.",
-        "Logistic Regression": "Accuracy at {metric:.2f}. The Corps would be proud.",
+          "Linear Regression": "R² of {metric:.4f}. My will constructs victory from data.",
+        "Logistic Regression": "Accuracy at {metric:.4f}. The Corps would be proud.",
         "K-Means Clustering": "By willpower, {k} clusters reveal the data's structure."
     }
 }
@@ -443,12 +443,16 @@ elif st.session_state.step == 'ml_task':
                 X_train = scaler.fit_transform(X_train)
                 X_test = scaler.transform(X_test)
 
-                if task == "Linear Regression":
+            if task == "Linear Regression":
                     model = LinearRegression()
                     model.fit(X_train, y_train)
                     preds = model.predict(X_test)
-                    r2 = model.score(X_test, y_test)
-                    st.success(f"R² Score: {r2:.2f}")
+                    r2 = r2_score(y_test, preds)
+                    try:
+                        rmse = mean_squared_error(y_test, preds, squared=False)
+                    except TypeError:
+                        rmse = np.sqrt(mean_squared_error(y_test, preds))
+                    st.success(f"R² Score: {r2:.4f} | RMSE: {rmse:.4f}")
                     result_df = pd.DataFrame({"Actual": y_test, "Predicted": preds})
                     fig = go.Figure()
                     fig.add_trace(
@@ -506,7 +510,7 @@ elif st.session_state.step == 'ml_task':
                     typewriter([message], color=hero_color["primary"])
                     typewriter(hero["farewell_lines"], color=hero_color["primary"])
 
-                else:
+            else:
                     model = LogisticRegression(max_iter=1000)
                     model.fit(X_train, y_train)
                     preds = model.predict(X_test)
