@@ -227,25 +227,64 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
+# --- Typewriter Utility Functions ---
+def typewriter(lines, color="#FFD700", delay=0.028):
+    area = st.empty()
+    buffer = ""
+    for line in lines:
+        for c in line:
+            buffer += c
+            area.markdown(
+                f"<div class='speech-bubble' style='background:#18172a; color:{color}; font-family:Oswald,Arial,sans-serif; font-size:1.5rem; font-weight:800; letter-spacing:1.2px;'>{buffer}</div>",
+                unsafe_allow_html=True,
+            )
+            time.sleep(delay)
+        buffer += "\n"
+
+
+def typewriter_welcome(text, color="#FFD700", delay=0.065):
+    area = st.empty()
+    buffer = ""
+    for c in text:
+        buffer += c
+        area.markdown(
+            f"<div class='gotham-type' style='font-size:2.4rem; margin-bottom:1.2rem; color:{color}; text-shadow:0 0 30px {color}, 0 0 10px #18172a, 2px 2px 0 #18172a, 4px 4px 12px #000000;'>{buffer}</div>",
+            unsafe_allow_html=True,
+        )
+        time.sleep(delay)
+
+
+def typewriter_intro_panel(text, delay=0.065):
+    panel = st.empty()
+    buffer = ""
+    for c in text:
+        buffer += c
+        panel.markdown(
+            f"""
+            <div class="comic-panel">
+                <div class="comic-issue-badge">ISSUE #1</div>
+                <div class="gotham-type">{buffer}</div>
+                <div class="speech-bubble">
+                    The command center of Earth's greatest defenders. Step forward, hero — your mission awaits.
+                </div>
+                <div class="hero-row">
+                    <img src="https://img.icons8.com/color/96/batman--v1.png" class="hero-icon" />
+                    <img src="https://img.icons8.com/color/96/superman.png" class="hero-icon" />
+                    <img src="https://img.icons8.com/color/96/green-lantern.png" class="hero-icon" />
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        time.sleep(delay)
+
+
 # --- Session State for Navigation ---
 if 'step' not in st.session_state:
     st.session_state.step = 'intro'
 
 if st.session_state.step == 'intro':
-    st.markdown(f"""
-      <div class="comic-panel">
-        <div class="comic-issue-badge">ISSUE #1</div>
-        <div class="gotham-type">WELCOME TO THE HALL OF JUSTICE</div>
-        <div class="speech-bubble">
-            The command center of Earth's greatest defenders. Step forward, hero — your mission awaits.
-        </div>
-        <div class="hero-row">
-            <img src="https://img.icons8.com/color/96/batman--v1.png" class="hero-icon" />
-            <img src="https://img.icons8.com/color/96/superman.png" class="hero-icon" />
-            <img src="https://img.icons8.com/color/96/green-lantern.png" class="hero-icon" />
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    typewriter_intro_panel("WELCOME TO THE HALL OF JUSTICE")
 
     # Center the Streamlit button with flexbox and style it
     st.markdown("""
@@ -396,29 +435,8 @@ elif st.session_state.step == 'ml_task':
         st.session_state['intro_played'] = False
         st.rerun()
 
-    def typewriter(lines, color="#FFD700", delay=0.028):
-        intro_area = st.empty()
-        buffer = ""
-        for line in lines:
-            for c in line:
-                buffer += c
-                intro_area.markdown(
-                    f"<div class='speech-bubble' style='background:#18172a; color:{color}; font-family:Oswald,Arial,sans-serif; font-size:1.5rem; font-weight:800; letter-spacing:1.2px;'>{buffer}</div>",
-                    unsafe_allow_html=True
-                )
-                time.sleep(delay)
-            buffer += "\n"
-
-    def typewriter_welcome(text, color="#FFD700", delay=0.065):
-        welcome_area = st.empty()
-        buffer = ""
-        for c in text:
-            buffer += c
-            welcome_area.markdown(
-                f"<div class='gotham-type' style='font-size:2.4rem; margin-bottom:1.2rem; color:{color}; text-shadow:0 0 30px {color}, 0 0 10px #18172a, 2px 2px 0 #18172a, 4px 4px 12px #000000;'>{buffer}</div>",
-                unsafe_allow_html=True
-            )
-            time.sleep(delay)
+    
+    # Use global typewriter helpers
 
     if 'intro_played' not in st.session_state or st.session_state.get('prev_hero') != hero_choice:
         st.session_state['intro_played'] = True
