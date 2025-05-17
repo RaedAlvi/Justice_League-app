@@ -108,7 +108,7 @@ def get_bg_url():
 
 # --- Load Google Fonts and Comic CSS with dynamic background ---
 st.markdown(f"""
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
 <style>
     body, .stApp {{
         background-color: #18172a;
@@ -117,6 +117,8 @@ st.markdown(f"""
         background-position: center;
         background-attachment: fixed;
         color: #FFD700;
+        transition: background-image 0.6s ease-in-out;
+        animation: heroFade 0.6s ease-in-out;
     }}
     .comic-panel {{
         border: 8px solid #FFD700;
@@ -141,20 +143,20 @@ st.markdown(f"""
         margin-bottom: 1rem;
         margin-top: 0;
     }}
-    .speech-bubble {{
-        background: #18172a;
-        border-radius: 23px;
-        display: inline-block;
-        padding: 1.1rem 2.5rem;
-        box-shadow: 0 0 18px #FFD70066;
-        margin-top: 1.7rem;
-        margin-bottom: 0.9rem;
-        color: #ffe066;
-        font-size: 1.38rem;
-        font-family: 'Oswald', Arial, sans-serif;
-        font-weight: 700;
-        letter-spacing: 1px;
-        position: relative;
+      .speech-bubble {{␊
+        background: #18172a;␊
+        border-radius: 23px;␊
+        display: inline-block;␊
+        padding: 1.1rem 2.5rem;␊
+        box-shadow: 0 0 18px #FFD70066;␊
+        margin-top: 1.7rem;␊
+        margin-bottom: 0.9rem;␊
+        color: #ffe066;␊
+        font-size: 1.38rem;␊
+        font-family: 'Comic Neue', 'Oswald', Arial, sans-serif;
+        font-weight: 700;␊
+        letter-spacing: 1px;␊
+        position: relative;␊
     }}
     .speech-bubble:after {{
         content: '';
@@ -223,6 +225,10 @@ st.markdown(f"""
     @keyframes float {{
         0%, 100% {{transform: translateY(0);}}
         50% {{transform: translateY(-15px);}}
+    }}
+    @keyframes heroFade {{
+        from {{ opacity: 0; transform: scale(1.05); }}
+        to {{ opacity: 1; transform: scale(1); }}
     }}
 </style>
 """, unsafe_allow_html=True)
