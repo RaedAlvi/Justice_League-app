@@ -6,7 +6,7 @@ Welcome to the **Knightfall Engine** — a Justice League themed machine learnin
 
 ## 👾 Project Inspiration
 
-I've always been intrigued by superhero games, especially those story-driven ones where you really feel like part of the team. So for our **AF3005 – Programming** course with Dr. Usama Arshad at LUMS, we thought:  
+I've always been intrigued by superhero games, especially those story-driven ones where you really feel like part of the team. So for our **AF3005 – Programming** course with Dr. Usama Arshad at FAST, we thought:  
 **Why not make our project something we'd actually have fun building, not just another assignment?**
 
 ---
