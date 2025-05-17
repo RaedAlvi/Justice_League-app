@@ -48,17 +48,7 @@ I've always been intrigued by superhero games, especially those story-driven one
 - **Visualization:** Plotly, Plotly Express
 - **UI & Theming:** Custom CSS, Google Fonts
 
----
 
-## 📷 Screenshots
-
-<!--
-Add screenshots here, for example:
-![Hero Selection](screenshots/hero_selection.png)
-![Batman Dashboard](screenshots/batman_dashboard.png)
--->
-
----
 
 ## 🌐 Live Demo
 
