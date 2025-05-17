@@ -30,7 +30,7 @@ HEROES = {
         "passage_lines": [
             "Welcome to the Batcave.",
             "Time to analyze Financial Data in the shadows using the Batcomputer.",
-            "I'm Batman.",
+            "I'm Batman!",
             "Your guide through Machine Learning.",
             "Together, we’ll hunt down bugs like rogues in Arkham...",
             "Turning lines of code into the Bat-Tools you need for sophisticated financial analysis."
@@ -42,10 +42,10 @@ HEROES = {
         "welcome": "RECOGNIZED. JL MEMBER 0002. WELCOME SUPERMAN!",
         "location": "Fortress of Solitude",
         "passage_lines": [
-            "Up, up, and away!",
+            "Need some help stranger?",
             "From the Fortress of Solitude to Metropolis, we'll soar through regression.",
             "I'm Superman.",
-            "Ready to lift heavy datasets, bringing order to your models—faster than a speeding bullet!"
+            "Ready to lift heavy datasets, bringing order to your models faster than a speeding bullet!"
         ],
         "farewell_lines": ["Hope is always alive. Until next time!"]
     },
@@ -54,10 +54,10 @@ HEROES = {
         "welcome": "RECOGNIZED. JL MEMBER 0003. WELCOME THE FLASH!",
         "location": "Speed Force",
         "passage_lines": [
-            "Speed Force, go!",
-            "Ready to move at lightning speed?",
+            "Welcome to my speed lab!",
+            "Ready to move at the speed of light?",
             "I'm The Flash.",
-            "Let’s sprint through loops and functions, processing market data in a flash."
+            "Let’s zoom through data and deliver lightning-fast insights, processing market data in a flash."
         ],
         "farewell_lines": ["Gotta run!"]
     },
@@ -108,7 +108,7 @@ def get_bg_url():
 
 # --- Load Google Fonts and Comic CSS with dynamic background ---
 st.markdown(f"""
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&display=swap" rel="stylesheet">
 <style>
     body, .stApp {{
         background-color: #18172a;
@@ -117,8 +117,6 @@ st.markdown(f"""
         background-position: center;
         background-attachment: fixed;
         color: #FFD700;
-        transition: background-image 0.6s ease-in-out;
-        animation: heroFade 0.6s ease-in-out;
     }}
     .comic-panel {{
         border: 8px solid #FFD700;
@@ -143,20 +141,20 @@ st.markdown(f"""
         margin-bottom: 1rem;
         margin-top: 0;
     }}
-      .speech-bubble {{␊
-        background: #18172a;␊
-        border-radius: 23px;␊
-        display: inline-block;␊
-        padding: 1.1rem 2.5rem;␊
-        box-shadow: 0 0 18px #FFD70066;␊
-        margin-top: 1.7rem;␊
-        margin-bottom: 0.9rem;␊
-        color: #ffe066;␊
-        font-size: 1.38rem;␊
-        font-family: 'Comic Neue', 'Oswald', Arial, sans-serif;
-        font-weight: 700;␊
-        letter-spacing: 1px;␊
-        position: relative;␊
+    .speech-bubble {{
+        background: #18172a;
+        border-radius: 23px;
+        display: inline-block;
+        padding: 1.1rem 2.5rem;
+        box-shadow: 0 0 18px #FFD70066;
+        margin-top: 1.7rem;
+        margin-bottom: 0.9rem;
+        color: #ffe066;
+        font-size: 1.38rem;
+        font-family: 'Oswald', Arial, sans-serif;
+        font-weight: 700;
+        letter-spacing: 1px;
+        position: relative;
     }}
     .speech-bubble:after {{
         content: '';
@@ -225,10 +223,6 @@ st.markdown(f"""
     @keyframes float {{
         0%, 100% {{transform: translateY(0);}}
         50% {{transform: translateY(-15px);}}
-    }}
-    @keyframes heroFade {{
-        from {{ opacity: 0; transform: scale(1.05); }}
-        to {{ opacity: 1; transform: scale(1); }}
     }}
 </style>
 """, unsafe_allow_html=True)
