@@ -205,12 +205,24 @@ st.markdown(f"""
         box-shadow: 0 0 20px #FFD70088;
         cursor: pointer;
     }}
-    h1, h2, h3, .stApp h1 {{
+     h1, h2, h3, .stApp h1 {{
         color: #FFD700 !important;
         font-family: 'Oswald', Arial Black, Arial, sans-serif;
         font-weight: 900;
         text-shadow: 0 0 18px #FFD700;
         text-transform: uppercase;
+    }}
+    .upload-icon {{
+        width: 120px;
+        height: 120px;
+        margin: 0.5rem auto;
+        display: block;
+        animation: float 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 10px #FFD700);
+    }}
+    @keyframes float {{
+        0%, 100% {{transform: translateY(0);}}
+        50% {{transform: translateY(-15px);}}
     }}
 </style>
 """, unsafe_allow_html=True)
@@ -334,7 +346,14 @@ if st.session_state.step == 'intro':
 
 # --- Step 1: Dataset Upload & Hero Selection ---
 elif st.session_state.step == 'upload':
-    st.title("Step 1: Upload Your Dataset")
+    st.markdown(f"""
+    <div class="comic-panel" style="max-width:700px;">
+        <div class="comic-issue-badge">STEP 1</div>
+        <div class="gotham-type" style="font-size:2.6rem; margin-bottom:0.4rem;">Upload Your Dataset</div>
+        <img src="https://img.icons8.com/color/120/csv.png" class="upload-icon" />
+        <div class="speech-bubble">Bring in a CSV file to get the adventure started!</div>
+    </div>
+    """, unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload CSV Dataset:", type=["csv"])
     if uploaded_file:
         st.session_state.data = pd.read_csv(uploaded_file)
@@ -390,19 +409,24 @@ elif st.session_state.step == 'ml_task':
                 time.sleep(delay)
             buffer += "\n"
 
+    def typewriter_welcome(text, color="#FFD700", delay=0.065):
+        welcome_area = st.empty()
+        buffer = ""
+        for c in text:
+            buffer += c
+            welcome_area.markdown(
+                f"<div class='gotham-type' style='font-size:2.4rem; margin-bottom:1.2rem; color:{color}; text-shadow:0 0 30px {color}, 0 0 10px #18172a, 2px 2px 0 #18172a, 4px 4px 12px #000000;'>{buffer}</div>",
+                unsafe_allow_html=True
+            )
+            time.sleep(delay)
+
     if 'intro_played' not in st.session_state or st.session_state.get('prev_hero') != hero_choice:
         st.session_state['intro_played'] = True
         st.session_state['prev_hero'] = hero_choice
-        st.markdown(
-            f"<div class='gotham-type' style='font-size:2.4rem; margin-bottom:1.2rem; color:{hero_color['primary']};'>{hero['welcome']}</div>",
-            unsafe_allow_html=True
-        )
+        typewriter_welcome(hero['welcome'], color=hero_color['primary'])
         typewriter(hero['passage_lines'], color=hero_color['primary'])
     else:
-        st.markdown(
-            f"<div class='gotham-type' style='font-size:2.4rem; margin-bottom:1.2rem; color:{hero_color['primary']};'>{hero['welcome']}</div>",
-            unsafe_allow_html=True
-        )
+        typewriter_welcome(hero['welcome'], color=hero_color['primary'])
         for line in hero['passage_lines']:
             st.markdown(
                 f"<div class='speech-bubble' style='background:#18172a; color:{hero_color['primary']}; font-family:Oswald,Arial,sans-serif; font-size:1.5rem; font-weight:800; letter-spacing:1.2px;'>{line}</div>",
